@@ -1,8 +1,8 @@
 # 360Game4Msdzls
 A 360Game5 custom deployment version installer, built based on Inno Setup
 
-本安装器为 360游戏大厅 的自定义部署版本，基于 Inno Setup 构建。
-支持标准与自定义两种安装模式，内置多版本 Flash 支持、兼容模式、配置自动适配等特性。
+本安装器为 360游戏大厅 的自定义部署版本，基于 Inno Setup 构建
+支持标准与自定义两种安装模式，内置多版本 Flash 支持、兼容模式、配置自动适配等特性
 
 ---
 
@@ -55,9 +55,8 @@ A 360Game5 custom deployment version installer, built based on Inno Setup
 
 ## 🚫 注意事项
 
-- 大厅每次启动时可能提示“文件已损坏”，请务必选择“否”，否则可能被强制更新至官方不兼容版本
+- 大厅每次启动时均会提示“文件已损坏”，请务必选择“否”，否则可能被强制更新至官方不友好版本
 - Flash 兼容模式适用于 V5 + Flash 13/34 组合，Flash 25 将自动使用 Flash 34 模拟运行
-- 推荐关闭自动联网功能并避免勾选“修复”选项
 
 ---
 

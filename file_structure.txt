@@ -3,6 +3,7 @@ Res\
   ├── v5\
   ├── v6\
   ├── flash\
+  ├── 360se6.txt
   └── Readme.txt
 setupicon.ico
-setup1.8.x.txt
+setup1.x.x.iss

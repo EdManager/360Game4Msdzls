@@ -60,7 +60,23 @@
 
 ## 🧪 开发 & 编译
 
-本脚本基于 Inno Setup 脚本语言，支持 Unicode 和 Modern Wizard UI
+本项目基于 Inno Setup 6.4.1 脚本语言构建，支持 Unicode 与 Modern UI。
+为支持安装界面中文化，本项目所用编译器已集成简体中文语言文件（非官方提供，用户需自行获取）。
 - 使用 Inno Setup Compiler 打开 .iss 文件
-- 确保文件结构同 file_structure.txt（示例结构请参考root目录）
+- 确保文件结构同 [file_structure](file_structure.txt)（示例结构请参考 [root](root) 目录）
 - 编译时将打包所有资源为单个 EXE 安装包
+
+---
+
+## 🧱 关于 360Game.ini 的配置说明
+
+由于大厅程序在初次运行后会自动生成 `360Game.ini` 配置文件，建议使用官方版本手动打开程序一次，并完成以下设置：
+
+1. 在大厅主页的设置窗口中取消勾选除“默认显示小号列表”外的所有基本设置，并在代理设置中选择“不使用代理服务器”；
+2. 在任意游戏窗口中切换为极速模式，并在工具栏管理中取消除键鼠记忆和变速外的功能显示（需默认显示工具栏，推荐自定义变速速度为 `3.00x` ）；
+3. 设置完成后，彻底关闭游戏大厅；
+4. 配置文件位于 `%APPDATA%\360Game5\data\360Game.ini`，可备份用于后续自动部署；
+5. 将配置文件中的npflash路径设置为 `C:\Users\Administrator\AppData\Roaming\360Game5\data\NPSWF.dll`，同理可将axflash定义至同路径下文件 `Flash.ocx`。
+
+⚠️ 本项目不会提供该 `.ini` 文件本体，如需预配置，请参考上述方式生成。
+

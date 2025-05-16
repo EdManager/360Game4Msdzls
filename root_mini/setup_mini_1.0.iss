@@ -205,10 +205,9 @@ begin
       begin
         KillProcessByName('360Game.exe');
         CleanRegistry;
-        // 删除bin和flash目录
+        // 删除bin目录
         DelTree(ExpandConstant('{%USERPROFILE}\AppData\Roaming\360Game5\bin'), True, True, True);
         DelTree(ExpandConstant('{app}\bin'), True, True, True);
-        DelTree(ExpandConstant('{app}\flash'), True, True, True);
         // 删除卸载程序自身
         DeleteFile(ExpandConstant('{uninstallexe}'));
       end;

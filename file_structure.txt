@@ -1,9 +1,38 @@
+常规文件结构（需自行对公共/特有文件进行筛选/分类）：
 Res\
-  ├── common\
-  ├── v5\
-  ├── v6\
-  ├── flash\
+  ├── common\                  (公共文件)
+  │   ├── bin\
+  │   │   ├── *                (其他bin文件)
+  │   │   └── uninsicon.ico
+  ├── v5\                      (V5版本特有文件)
+  │   ├── bin\*
+  │   └── data\
+  │   │   └── 360Game.ini
+  ├── v6\                      (V6版本特有文件)
+  │   ├── bin\*
+  │   └── data\
+  │   │   └── 360Game.ini
+  ├── flash\                   (Flash相关文件)
+  │   ├── NPSWF13.dll
+  │   ├── NPSWF25.dll
+  │   ├── NPSWF34.dll
+  │   ├── Flash13.ocx
+  │   ├── Flash34.ocx
+  │   └── AXsetup.exe
   ├── 360se6.txt
   └── Readme.txt
 setupicon.ico
 setup1.x.x.iss
+
+mini版文件结构（仅包含单版本、绑定单个Flash DLL文件）：
+Res\
+  ├── bin\
+  │   ├── *                    (其他bin文件)
+  │   └── uninsicon.ico
+  ├── data\
+  │   ├── 360Game.ini
+  │   └── NPSWF.dll
+  ├── 360se6.txt
+  └── Readme.txt
+setupicon.ico
+setup_mini_1.x.iss

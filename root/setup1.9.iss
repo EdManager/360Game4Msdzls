@@ -1,7 +1,7 @@
 [Setup]
 AppId={{F3A6B8D2-4E1F-4A3C-9D1B-5E8C9F2A1B7D}
 AppName=360游戏大厅
-AppVersion=1.8
+AppVersion=1.9
 AppPublisher=Msdzls Team for 360Game 
 DefaultDirName={userappdata}\360Game5
 DefaultGroupName=360游戏大厅
@@ -560,8 +560,8 @@ begin
   if CurPageID = wpFinished then
   begin
     WizardForm.FinishedLabel.Caption := '360游戏大厅 安装已完成！' + #13#10#13#10 +
-      '重要提示：大厅每次启动时都会提示文件已损坏并问是否下载最新，' + #13#10 +
-      '切记一定要选"否"，以防其自动更新至不友好的新版。';
+      '重要提示：关闭大厅游戏窗口时可能会被问是否添加桌面快捷方式，' + #13#10 +
+      '切记一定要选"取消"，以防其添加右下角托盘图标。';
 	WizardForm.FinishedLabel.Height := ScaleY(120);
   end;
 end;

@@ -22,7 +22,7 @@ Res\
   ├── 360se6.txt
   └── Readme.txt
 setupicon.ico
-setup1.x.x.iss
+setup1.x.iss
 
 mini版文件结构（仅包含单版本、绑定单个Flash DLL文件）：
 Res\

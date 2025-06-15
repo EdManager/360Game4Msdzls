@@ -53,22 +53,30 @@
 
 ## 🚫 注意事项
 
-- 大厅每次启动时均会提示“文件已损坏”，请务必选择“否”，否则可能被强制更新至官方不友好版本；
+- 关闭大厅游戏窗口时可能会被询问“是否添加桌面快捷方式”，请务必选择“取消”，否则会被添加右下角托盘图标，且可能出现更多弹窗；
 - Flash 兼容模式适用于 V5 + Flash 13/34 组合，Flash 25 将自动使用 Flash 34 模拟运行。
 
 ---
 
-## 🧪 开发 & 编译
+## 🛠️ 开发 & 编译
 
-本项目基于 Inno Setup 6.4.1 脚本语言构建，支持 Unicode 与 Modern UI。为支持安装界面中文化，本项目所用编译器已集成简体中文语言文件（非官方提供，用户需自行获取）。
+本项目基于 **Inno Setup 6.4.1（支持简体中文语言文件）** 编译构建，支持 Unicode 与 Modern UI。
 
-- 使用 Inno Setup Compiler 打开 .iss 文件；
-- 确保文件结构同 [file_structure](file_structure.txt)（示例结构请参考 [root](root) 目录）；
-- 编译时将打包所有资源为单个 EXE 安装器。
+### 使用环境要求
+- 建议使用 Inno Setup 汉化版本（支持 `compiler:Default.isl` 与简体中文 UI）；
+- 原版 Inno Setup 不包含 `chinese.isl`，请自行配置或参考汉化版环境（非官方提供，用户需自行获取）。
+
+### 编译步骤
+1. 使用 Inno Setup Compiler 打开安装脚本（.iss 文件）；
+2. 确保文件结构同 [file_structure](file_structure.txt)（示例结构请参考 [root](root) 目录）；
+3. 在资源文件中：
+- 删除 `360GameLiveUpdate.dll`
+- 复制 `360GameIPC.dll`，并重命名为 `360GameLiveUpdate.dll`（用于阻止大厅更新弹窗）
+4. 运行编译，生成单文件 EXE 安装包。
 
 ---
 
-## 🧱 关于 360Game.ini 的配置说明
+## 🧪 关于 360Game.ini 的配置说明
 
 大厅程序会自动生成 `360Game.ini` 配置文件，建议使用官方版本手动打开程序一次，并完成以下设置：
 

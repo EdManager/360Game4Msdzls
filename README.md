@@ -60,7 +60,7 @@
 
 ## 🛠️ 开发 & 编译
 
-本项目基于 **Inno Setup 6.4.1（支持简体中文语言文件）** 编译构建，支持 Unicode 与 Modern UI。
+本项目基于 **Inno Setup 6.4.1 (支持简体中文语言文件)** 编译构建，支持 Unicode 与 Modern UI。
 
 ### 使用环境要求
 - 建议使用 Inno Setup 汉化版本（支持 `compiler:Default.isl` 与简体中文 UI）；

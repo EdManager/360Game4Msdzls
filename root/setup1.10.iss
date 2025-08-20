@@ -1,7 +1,7 @@
 [Setup]
 AppId={{F3A6B8D2-4E1F-4A3C-9D1B-5E8C9F2A1B7D}
 AppName=360游戏大厅
-AppVersion=1.9
+AppVersion=1.10
 AppPublisher=Msdzls Team for 360Game 
 DefaultDirName={userappdata}\360Game5
 DefaultGroupName=360游戏大厅
@@ -21,7 +21,6 @@ ChangesAssociations=yes
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
-  // 由于使用的是汉化版Inno Setup，无需指定语言，用Default语言文件即满足要求
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: checkedonce
@@ -32,7 +31,7 @@ Source: "setupicon.ico"; DestDir: "{app}"; Flags: solidbreak dontcopy
 
 [Icons]
 Name: "{group}\360游戏大厅"; Filename: "{app}\bin\360Game.exe"
-Name: "{commondesktop}\360游戏大厅"; Filename: "{app}\bin\360Game.exe"; Tasks: desktopicon
+Name: "{userdesktop}\360游戏大厅"; Filename: "{app}\bin\360Game.exe"; Tasks: desktopicon
 Name: "{group}\360游戏大厅卸载程序"; Filename: "{app}\unins000.exe"; IconFilename: "{app}\bin\uninsicon.ico"
 
 [Registry]
@@ -163,6 +162,27 @@ begin
       FindClose(FindRec);
     end;
   end;
+end;
+
+procedure ForceDeleteDirectory(Path: string);
+var
+  FindRec: TFindRec;
+begin
+  if FindFirst(Path + '\*', FindRec) then
+  try
+    repeat
+      if (FindRec.Name <> '.') and (FindRec.Name <> '..') then
+      begin
+        if FindRec.Attributes and FILE_ATTRIBUTE_DIRECTORY <> 0 then
+          ForceDeleteDirectory(Path + '\' + FindRec.Name)
+        else
+          DeleteFile(Path + '\' + FindRec.Name);
+      end;
+    until not FindNext(FindRec);
+  finally
+    FindClose(FindRec);
+  end;
+  RemoveDir(Path);
 end;
 
 function EnsureGame5Suffix(const Path: string): string;
@@ -390,8 +410,8 @@ begin
 
   // 条件2：检测版本目录是否存在
   SetArrayLength(PathsToCheck, 2);
-  PathsToCheck[0] := ExpandConstant('{%USERPROFILE}\AppData\Roaming\360Game5\bin\7.0.0.1110');
-  PathsToCheck[1] := ExpandConstant('{app}\bin\7.0.0.1110');
+  PathsToCheck[0] := ExpandConstant('{%USERPROFILE}\AppData\Roaming\360Game5\bin\7.0.0.1110\360');
+  PathsToCheck[1] := ExpandConstant('{app}\bin\7.0.0.1110\360');
 
   VersionDirExists := False;
   for i := 0 to GetArrayLength(PathsToCheck) - 1 do
@@ -420,7 +440,7 @@ begin
     SessionPath := ExpandConstant('{%USERPROFILE}\AppData\Roaming\360Game5\session');
     if DirExists(SessionPath) then
     begin
-      DeleteDirectory(SessionPath);
+      ForceDeleteDirectory(SessionPath);
       Log('条件满足，正在清理session文件夹...');
     end
     else
@@ -435,7 +455,7 @@ begin
   // 删除旧的bin目录
   BinPath := ExpandConstant('{%USERPROFILE}\AppData\Roaming\360Game5\bin');
   if DirExists(BinPath) then
-    DeleteDirectory(BinPath);
+    ForceDeleteDirectory(BinPath);
   
   // 删除桌面快捷方式
   DesktopPath := ExpandConstant('{%USERPROFILE}\Desktop\360游戏大厅.lnk');
@@ -520,13 +540,13 @@ begin
   begin
     ForceDirectories(AppDataPath);
     DirectoryCopyForce(DataPath, AppDataPath);
-    DeleteDirectory(DestPath + '\data');
+    ForceDeleteDirectory(DestPath + '\data');
   end;
   
   // 安装完成后删除版本目录
-  DeleteDirectory(DestPath + '\v5');
-  DeleteDirectory(DestPath + '\v6');
-  DeleteDirectory(DestPath + '\common');
+  ForceDeleteDirectory(DestPath + '\v5');
+  ForceDeleteDirectory(DestPath + '\v6');
+  ForceDeleteDirectory(DestPath + '\common');
   
   // 在完成页面添加自定义复选框
   ShowReadmeCheckBox := TNewCheckBox.Create(WizardForm);

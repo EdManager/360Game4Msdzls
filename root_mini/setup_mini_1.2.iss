@@ -1,7 +1,7 @@
 [Setup]
 AppId={{F3A6B8D2-4E1F-4A3C-9D1B-5E8C9F2A1B7D}
 AppName=360游戏大厅
-AppVersion=1.1
+AppVersion=1.2
 AppPublisher=Msdzls Team for 360Game 
 DefaultDirName={userappdata}\360Game5
 DefaultGroupName=360游戏大厅
@@ -157,6 +157,27 @@ begin
   end;
 end;
 
+procedure ForceDeleteDirectory(Path: string);
+var
+  FindRec: TFindRec;
+begin
+  if FindFirst(Path + '\*', FindRec) then
+  try
+    repeat
+      if (FindRec.Name <> '.') and (FindRec.Name <> '..') then
+      begin
+        if FindRec.Attributes and FILE_ATTRIBUTE_DIRECTORY <> 0 then
+          ForceDeleteDirectory(Path + '\' + FindRec.Name)
+        else
+          DeleteFile(Path + '\' + FindRec.Name);
+      end;
+    until not FindNext(FindRec);
+  finally
+    FindClose(FindRec);
+  end;
+  RemoveDir(Path);
+end;
+
 function EnsureGame5Suffix(const Path: string): string;
 begin
   Result := Path;
@@ -241,7 +262,7 @@ begin
   // 删除旧的bin目录
   BinPath := ExpandConstant('{%USERPROFILE}\AppData\Roaming\360Game5\bin');
   if DirExists(BinPath) then
-    DeleteDirectory(BinPath);
+    ForceDeleteDirectory(BinPath);
 
   // 检测注册表项决定是否清理session
   ShouldCleanSession := RegKeyExists(HKEY_CURRENT_USER,
@@ -295,7 +316,7 @@ begin
   begin
     ForceDirectories(AppDataPath);
     DirectoryCopyForce(DataPath, AppDataPath);
-    DeleteDirectory(DestPath + '\data');
+    ForceDeleteDirectory(DestPath + '\data');
   end;
   
   // 在完成页面添加自定义复选框

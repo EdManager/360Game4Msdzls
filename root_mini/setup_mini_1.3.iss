@@ -1,11 +1,11 @@
 [Setup]
 AppId={{F3A6B8D2-4E1F-4A3C-9D1B-5E8C9F2A1B7D}
-AppName=360游戏大厅
-AppVersion=1.2
-AppPublisher=Msdzls Team for 360Game 
+AppName=360游戏大厅修复版
+AppVersion=1.3
+AppPublisher=Msdzls Open Source Project
 DefaultDirName={userappdata}\360Game5
-DefaultGroupName=360游戏大厅
-OutputBaseFilename=360GameSetup
+DefaultGroupName=360游戏大厅修复版
+OutputBaseFilename=360Game4Msdzls_v7_v1.3
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
@@ -14,7 +14,7 @@ SetupLogging=yes
 SetupIconFile=setupicon.ico
 UninstallFilesDir={app}
 UninstallDisplayIcon={app}\unins000.exe
-UninstallDisplayName=360游戏大厅卸载程序
+UninstallDisplayName=360游戏大厅修复版卸载程序
 VersionInfoCopyright=© 360.cn All Rights Reserved.
 VersionInfoVersion=7.0.0.1110
 ChangesAssociations=yes
@@ -30,9 +30,9 @@ Source: "Res\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs solidbrea
 Source: "setupicon.ico"; DestDir: "{app}"; Flags: solidbreak dontcopy
 
 [Icons]
-Name: "{group}\360游戏大厅"; Filename: "{app}\bin\360Game.exe"
+Name: "{group}\360游戏大厅修复版"; Filename: "{app}\bin\360Game.exe"
 Name: "{commondesktop}\360游戏大厅"; Filename: "{app}\bin\360Game.exe"; Tasks: desktopicon
-Name: "{group}\360游戏大厅卸载程序"; Filename: "{app}\unins000.exe"; IconFilename: "{app}\bin\uninsicon.ico"
+Name: "{group}\360游戏大厅修复版卸载程序"; Filename: "{app}\unins000.exe"; IconFilename: "{app}\bin\uninsicon.ico"
 
 [Registry]
 Root: HKCU; Subkey: "Software\360Game5"; Flags: deletekey uninsdeletekey
@@ -235,8 +235,13 @@ begin
 end;
 
 procedure InitializeWizard;
+var
+  UserProfilePath: string;
 begin
-  UserName := GetUserNameString();
+  // 获取真实的用户目录名（从%USERPROFILE%环境变量）
+  UserProfilePath := ExpandConstant('{%USERPROFILE}');
+  // 提取目录名（去除路径分隔符）
+  UserName := ExtractFileName(RemoveBackslash(UserProfilePath));
 end;
 
 function NextButtonClick(CurPageID: Integer): Boolean;
@@ -253,7 +258,7 @@ end;
 
 procedure CleanUpBeforeInstall;
 var
-  BinPath, SessionPath, DesktopPath: string;
+  BinPath, AppBinPath, SessionPath, DesktopPath: string;
   ShouldCleanSession: Boolean;
 begin
   // 强制结束进程
@@ -263,6 +268,9 @@ begin
   BinPath := ExpandConstant('{%USERPROFILE}\AppData\Roaming\360Game5\bin');
   if DirExists(BinPath) then
     ForceDeleteDirectory(BinPath);
+  AppBinPath := ExpandConstant('{app}\bin');
+  if DirExists(AppBinPath) then
+	ForceDeleteDirectory(AppBinPath);
 
   // 检测注册表项决定是否清理session
   ShouldCleanSession := RegKeyExists(HKEY_CURRENT_USER,
@@ -303,7 +311,7 @@ begin
   // 判断是否为默认安装位置
   IsDefaultInstall := SameText(DestPath, ExpandConstant('{userappdata}\360Game5'));
   
-  // 替换INI文件中的用户名
+  // 替换INI文件中的用户名（使用真实的用户目录名）
   if FileExists(DataPath + '\360Game.ini') then
     if CompareText(UserName, 'Administrator') <> 0 then
       ReplaceIniString(DataPath + '\360Game.ini', 'Administrator', UserName);
@@ -352,7 +360,7 @@ begin
   begin
     WizardForm.FinishedLabel.Caption := '360游戏大厅 安装已完成！' + #13#10#13#10 +
       '重要提示：关闭大厅游戏窗口时可能会被问是否添加桌面快捷方式，' + #13#10 +
-      '切记一定要选"取消"，以防其添加右下角托盘图标。';
+      '切记一定要选"取消"，以防其在之后出现危险弹窗。';
 	WizardForm.FinishedLabel.Height := ScaleY(120);
   end;
 end;

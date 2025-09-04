@@ -84,7 +84,7 @@
 2. 在任意游戏窗口中切换为极速模式，并在工具栏管理中取消除键鼠记忆和变速外的功能显示（需默认显示工具栏，推荐自定义变速速度为 `3.00x` ）；
 3. 设置完成后，彻底关闭大厅程序；
 4. 配置文件位于 `%APPDATA%\360Game5\data\360Game.ini`，可备份用于后续自动部署；
-5. 将配置文件中的 npflash 路径设置为 `C:\Users\Administrator\AppData\Roaming\360Game5\data\NPSWF.dll`，同理将 axflash 定义至相同位置下文件 `Flash.ocx`。
+5. 将配置文件中的 npflash 路径设置为 `C:\Users\Administrator\AppData\Roaming\360Game5\data\NPSWF.dll`，同理将 axflash 定义至相同位置下文件 `Flash.ocx`；
+6. 将配置文件中的 createshortcutday 值设置为 `2000000000`（或更高）。
 
 ⚠️ 本项目不会提供该 `.ini` 文件本体，如需预配置，请参考上述方式生成。
-

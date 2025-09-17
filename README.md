@@ -21,8 +21,7 @@
 | 路径 | 说明 |
 |------|------|
 | `%APPDATA%\360Game5\` | 主程序路径（可自定义） |
-| `%APPDATA%\360Game5\data\` | INI 配置与 Flash 运行文件固定位置 |
-| `%APPDATA%\360se6` | 特殊文件占位路径 |
+| `%APPDATA%\360Game5\data\` | INI 配置、占位文件与 Flash 文件固定位置 |
 | 桌面 | 可选创建快捷方式 |
 
 ---
@@ -85,6 +84,7 @@
 3. 设置完成后，彻底关闭大厅程序；
 4. 配置文件位于 `%APPDATA%\360Game5\data\360Game.ini`，可备份用于后续自动部署；
 5. 将配置文件中的 npflash 路径设置为 `C:\Users\Administrator\AppData\Roaming\360Game5\data\NPSWF.dll`，同理将 axflash 定义至相同位置下文件 `Flash.ocx`；
-6. 将配置文件中的 createshortcutday 值设置为 `2000000000`（或更高）。
+6. 将配置文件中的 createshortcutday 值设置为 `2000000000`（或更高）；
+7. 若进一步追求稳定性，可在 data 目录添加空的占位文件如 `se_insetall.exe`，并将配置文件中的 gamedownloadpath 路径设置为 `C:\Users\Administrator\AppData\Roaming\360Game5\data`。
 
 ⚠️ 本项目不会提供该 `.ini` 文件本体，如需预配置，请参考上述方式生成。

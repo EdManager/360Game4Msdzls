@@ -4,6 +4,11 @@ Res\
   │   ├── bin\
   │   │   ├── *                (其他bin文件)
   │   │   └── uninsicon.ico
+  │   ├── data\
+  │   │   ├── Inst1__9510113.exe
+  │   │   ├── Inst1__9510113.exe.tmp  
+  │   │   ├── se_insetall.exe
+  │   │   └── se_insetall.exe.tmp
   ├── v5\                      (V5版本特有文件)
   │   ├── bin\*
   │   └── data\
@@ -19,8 +24,8 @@ Res\
   │   ├── Flash13.ocx
   │   ├── Flash34.ocx
   │   └── AXsetup.exe
-  ├── 360se6.txt
   └── Readme.txt
+license.txt
 setupicon.ico
 setup1.x.iss
 
@@ -31,8 +36,12 @@ Res\
   │   └── uninsicon.ico
   ├── data\
   │   ├── 360Game.ini
-  │   └── NPSWF.dll
-  ├── 360se6.txt
+  │   ├── NPSWF.dll
+  │   ├── Inst1__9510113.exe
+  │   ├── Inst1__9510113.exe.tmp  
+  │   ├── se_insetall.exe
+  │   └── se_insetall.exe.tmp
   └── Readme.txt
+license.txt
 setupicon.ico
 setup_mini_1.x.iss

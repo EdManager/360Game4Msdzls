@@ -32,7 +32,7 @@ Source: "setupicon.ico"; DestDir: "{app}"; Flags: solidbreak dontcopy
 
 [Icons]
 Name: "{group}\360游戏大厅修复版"; Filename: "{app}\bin\360Game.exe"
-Name: "{commondesktop}\360游戏大厅"; Filename: "{app}\bin\360Game.exe"; Tasks: desktopicon
+Name: "{userdesktop}\360游戏大厅"; Filename: "{app}\bin\360Game.exe"; Tasks: desktopicon
 Name: "{group}\卸载360游戏大厅修复版"; Filename: "{app}\unins000.exe"; IconFilename: "{app}\bin\uninsicon.ico"
 
 [Registry]
@@ -302,3 +302,4 @@ begin
     WizardForm.FinishedLabel.Height := ScaleY(100);
   end;
 end;
+

@@ -1,11 +1,11 @@
 [Setup]
 AppId={{F3A6B8D2-4E1F-4A3C-9D1B-5E8C9F2A1B7D}
 AppName=360游戏大厅修复版
-AppVersion=1.11
+AppVersion=1.12
 AppPublisher=Msdzls Open Source Project
 DefaultDirName={userappdata}\360Game5
 DefaultGroupName=360游戏大厅修复版
-OutputBaseFilename=360Game4Msdzls_v5-6_v1.11
+OutputBaseFilename=360Game4Msdzls_v5-6_v1.12
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
@@ -13,11 +13,12 @@ PrivilegesRequired=admin
 SetupLogging=yes
 SetupIconFile=setupicon.ico
 UninstallFilesDir={app}
-UninstallDisplayIcon={app}\unins000.exe
-UninstallDisplayName=360游戏大厅修复版卸载程序
+UninstallDisplayIcon={app}\bin\360Game.exe
+UninstallDisplayName=360游戏大厅修复版
 VersionInfoCopyright=© 360.cn All Rights Reserved.
 VersionInfoVersion=5.2.0.1259
 ChangesAssociations=yes
+LicenseFile=license.txt
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -32,7 +33,7 @@ Source: "setupicon.ico"; DestDir: "{app}"; Flags: solidbreak dontcopy
 [Icons]
 Name: "{group}\360游戏大厅修复版"; Filename: "{app}\bin\360Game.exe"
 Name: "{userdesktop}\360游戏大厅"; Filename: "{app}\bin\360Game.exe"; Tasks: desktopicon
-Name: "{group}\360游戏大厅修复版卸载程序"; Filename: "{app}\unins000.exe"; IconFilename: "{app}\bin\uninsicon.ico"
+Name: "{group}\卸载360游戏大厅修复版"; Filename: "{app}\unins000.exe"; IconFilename: "{app}\bin\uninsicon.ico"
 
 [Registry]
 Root: HKCU; Subkey: "Software\360Game5"; Flags: deletekey uninsdeletekey
@@ -40,6 +41,7 @@ Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Uninstall\360Game
 
 [Run]
 Filename: "{app}\Readme.txt"; Description: "查看说明文件"; Flags: postinstall shellexec unchecked
+Filename: "{app}\bin\360Game.exe"; Description: "运行360游戏大厅"; Flags: postinstall nowait skipifsilent unchecked
 
 [Code]
 var
@@ -52,45 +54,13 @@ var
   SelectedVersion, SelectedFlashVersion, UserName: string;
   CustomInstall: Boolean;
   ShowReadmeCheckBox: TNewCheckBox;
+  RunAppCheckBox: TNewCheckBox; // 新增：运行应用程序的复选框
 
 function KillProcessByName(const FileName: string): Boolean;
 var
   Code: Integer;
 begin
   Result := ShellExec('', 'taskkill.exe', '/F /IM ' + FileName, '', SW_HIDE, ewWaitUntilTerminated, Code);
-end;
-
-function DeleteDirectory(const Path: string): Boolean;
-var
-  FindRec: TFindRec;
-  FilePath: string;
-begin
-  Result := True;
-  if FindFirst(Path + '\*', FindRec) then
-  begin
-    try
-      repeat
-        if (FindRec.Name <> '.') and (FindRec.Name <> '..') then
-        begin
-          FilePath := Path + '\' + FindRec.Name;
-          if FindRec.Attributes and FILE_ATTRIBUTE_DIRECTORY = 0 then
-          begin
-            if not DeleteFile(FilePath) then
-              Result := False;
-          end
-          else
-          begin
-            if not DeleteDirectory(FilePath) then
-              Result := False;
-          end;
-        end;
-      until not FindNext(FindRec);
-    finally
-      FindClose(FindRec);
-    end;
-  end;
-  if Result then
-    Result := RemoveDir(Path);
 end;
 
 function ReplaceIniString(const FileName, SearchString, ReplaceString: string): Boolean;
@@ -197,34 +167,6 @@ begin
   end;
 end;
 
-procedure HandleSpecialFile(DestPath: string);
-var
-  SeFile, TargetPath: string;
-begin
-  SeFile := DestPath + '\360se6.txt';
-  TargetPath := ExpandConstant('{%USERPROFILE}\AppData\Roaming\360se6');
-  
-  if FileExists(SeFile) then
-  begin
-    Log('正在处理特殊文件...');
-    try
-      // 确保目标目录存在
-      ForceDirectories(ExtractFilePath(TargetPath));
-      
-      // 复制前删除已有文件
-      if FileExists(TargetPath) then
-        DeleteFile(TargetPath);
-        
-      if CopyFile(SeFile, TargetPath, False) then
-        Log('文件复制成功')
-      else
-        Log('文件复制失败');
-    except
-      Log('处理特殊文件时发生异常');
-    end;
-  end;
-end;
-
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 begin
   case CurUninstallStep of
@@ -251,6 +193,8 @@ begin
   UserProfilePath := ExpandConstant('{%USERPROFILE}');
   // 提取目录名（去除路径分隔符）
   UserName := ExtractFileName(RemoveBackslash(UserProfilePath));
+
+  WizardForm.LICENSEACCEPTEDRADIO.checked:= true;
 
   // 安装类型选择页面
   InstallTypePage := CreateCustomPage(wpWelcome, '选择安装类型', '请选择安装方式：');
@@ -368,6 +312,8 @@ begin
 
   if CurPageID = wpFinished then
   begin
+    // 根据复选框状态设置是否运行应用程序
+    WizardForm.RunList.Checked[1] := RunAppCheckBox.Checked;
     // 根据复选框状态设置是否运行说明文件
     WizardForm.RunList.Checked[0] := ShowReadmeCheckBox.Checked;
   end;
@@ -402,41 +348,17 @@ begin
   end;
 end;
 
-function ShouldCleanSession: Boolean;
-var
-  RegExists, VersionDirExists: Boolean;
-  PathsToCheck: TArrayOfString;
-  i: Integer;
-begin
-  // 条件1：检测注册表项是否存在
-  RegExists := RegKeyExists(HKEY_CURRENT_USER,
-    'Software\Microsoft\Windows\CurrentVersion\Uninstall\360Game5');
-
-  // 条件2：检测版本目录是否存在
-  SetArrayLength(PathsToCheck, 2);
-  PathsToCheck[0] := ExpandConstant('{%USERPROFILE}\AppData\Roaming\360Game5\bin\7.0.0.1110\360');
-  PathsToCheck[1] := ExpandConstant('{app}\bin\7.0.0.1110\360');
-
-  VersionDirExists := False;
-  for i := 0 to GetArrayLength(PathsToCheck) - 1 do
-  begin
-    if DirExists(PathsToCheck[i]) then
-    begin
-      VersionDirExists := True;
-      Break;
-    end;
-  end;
-
-  // 任意条件满足即返回True
-  Result := RegExists or VersionDirExists;
-end;
-
 procedure CleanUpBeforeInstall;
 var
-  BinPath, AppBinPath, SessionPath, DesktopPath: string;
+  AppBinPath, BinPath, CachePath, SessionPath, DesktopPath: string;
+  ShouldCleanSession: Boolean;
 begin
   // 强制结束进程
   KillProcessByName('360Game.exe');
+
+  // 检测位置是否存在决定是否清理session
+  CachePath := ExpandConstant('{%USERPROFILE}\AppData\Roaming\360Game5\session\0\Cache');
+  ShouldCleanSession := DirExists(CachePath);
 
   // 若满足对应条件，则清理session目录
   if ShouldCleanSession then
@@ -475,7 +397,7 @@ end;
 
 procedure InstallFiles;
 var
-  DestPath, DataPath, FlashFile, FlashOCX, TargetFlash, AppDataPath: string;
+  DestPath, FlashFile, FlashOCX, TargetFlash, DataPath, AppDataPath: string;
   ResultCode: Integer;
   IsDefaultInstall: Boolean;
 begin
@@ -521,9 +443,6 @@ begin
   if FileExists(FlashFile) then
     CopyFile(FlashFile, DataPath + '\NPSWF.dll', False);
 
-  // 添加360se6占用文件	
-  HandleSpecialFile(ExpandConstant('{app}'));
-
   // 处理兼容模式（仅V5版本）
   if (SelectedVersion = 'V5') then
   begin
@@ -559,11 +478,21 @@ begin
   ShowReadmeCheckBox := TNewCheckBox.Create(WizardForm);
   ShowReadmeCheckBox.Parent := WizardForm.FinishedPage;
   ShowReadmeCheckBox.Left := WizardForm.RunList.Left;
-  ShowReadmeCheckBox.Top := WizardForm.RunList.Top;
+  ShowReadmeCheckBox.Top := WizardForm.RunList.Top - ScaleY(4);
   ShowReadmeCheckBox.Width := WizardForm.RunList.Width;
   ShowReadmeCheckBox.Caption := '查看说明文件 (推荐)';
   ShowReadmeCheckBox.Checked := True; // 默认勾选
   ShowReadmeCheckBox.Visible := True;
+
+  // 添加运行应用程序的复选框
+  RunAppCheckBox := TNewCheckBox.Create(WizardForm);
+  RunAppCheckBox.Parent := WizardForm.FinishedPage;
+  RunAppCheckBox.Left := WizardForm.RunList.Left;
+  RunAppCheckBox.Top := ShowReadmeCheckBox.Top + ShowReadmeCheckBox.Height + ScaleY(4);
+  RunAppCheckBox.Width := WizardForm.RunList.Width;
+  RunAppCheckBox.Caption := '运行360游戏大厅';
+  RunAppCheckBox.Checked := False; // 默认不勾选
+  RunAppCheckBox.Visible := True;
 end;
 
 procedure CurStepChanged(CurStep: TSetupStep);
@@ -586,9 +515,9 @@ procedure CurPageChanged(CurPageID: Integer);
 begin
   if CurPageID = wpFinished then
   begin
-    WizardForm.FinishedLabel.Caption := '360游戏大厅 安装已完成！' + #13#10#13#10 +
-      '重要提示：关闭大厅游戏窗口时可能会被问是否添加桌面快捷方式，' + #13#10 +
-      '切记一定要选"取消"，以防其在之后出现危险弹窗。';
-	WizardForm.FinishedLabel.Height := ScaleY(120);
+    WizardForm.FinishedLabel.Caption := '360游戏大厅修复版 安装已完成！' + #13#10#13#10 +
+      '强烈建议查看说明文件以了解使用注意事项和常见问题解答。' + #13#10 +
+      '您可以选择立即运行游戏大厅或查看说明文件。';
+    WizardForm.FinishedLabel.Height := ScaleY(100);
   end;
 end;

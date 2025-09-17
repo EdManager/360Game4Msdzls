@@ -242,7 +242,7 @@ begin
   VersionRadioButton2.Parent := VersionPage.Surface;
   VersionRadioButton2.Top := VersionRadioButton1.Top + VersionRadioButton1.Height + ScaleY(5);
   VersionRadioButton2.Width := VersionPage.SurfaceWidth;
-  VersionRadioButton2.Caption := 'V6版本 (新版UI，通用性更好)';
+  VersionRadioButton2.Caption := 'V6版本 (新版UI，支持键鼠记忆)';
 
   // Flash版本选择页面
   FlashVersionPage := CreateCustomPage(VersionPage.ID, '选择Flash版本', 'Flash Player版本选择');
@@ -521,3 +521,4 @@ begin
     WizardForm.FinishedLabel.Height := ScaleY(100);
   end;
 end;
+
